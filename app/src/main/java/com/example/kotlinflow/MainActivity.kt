@@ -41,18 +41,23 @@ class MainActivity : ComponentActivity() {
 
                         Column {
                             val textfeildvalue = remember { mutableStateOf(-5) }
-
+                            val textfeildvalue1 = remember { mutableStateOf(-5) }
                             Text(text = textfeildvalue.value.toString())
-
-
+                            Text(text = textfeildvalue1.value.toString())
 
 
                             lifecycleScope.launch() {
+                                viewModel.value.sharedFlow.collectLatest {
+                                    textfeildvalue.value = it
+                                    Log.d("MY_Tag", it.toString())
+                                }
+                            }
+                            lifecycleScope.launch() {
                                     delay(5000)
 
-                            viewModel.value.sharedFlow.collect{
-                                    textfeildvalue.value = it
-
+                            viewModel.value.sharedFlow.collectLatest{
+                                    textfeildvalue1.value = it
+                                    Log.d("MY_Tag1", it.toString())
                             }
 
 
