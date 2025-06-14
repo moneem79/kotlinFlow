@@ -6,6 +6,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 
@@ -30,12 +36,19 @@ class mainViewMODel:ViewModel() {
     }
 
     private fun collectFlow() {
+       val count = countDownFlow.onEach {
+            println(it)
+        }.launchIn(viewModelScope)
         viewModelScope.launch {
-            countDownFlow.collect { time->
-                delay (150L)
+            countDownFlow
+                .flatMapConcat { value ->
+                    flow {
+                        emit("A")
+                        delay(100)
+                        emit("B")
+                    }
 
-                println("Collected value: $time")
+                }
             }
         }
     }
-}
